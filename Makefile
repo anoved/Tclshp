@@ -10,7 +10,7 @@ SHAPELIB_OBJS = $(SHAPELIB_PREFIX)/shpopen.o \
 				$(SHAPELIB_PREFIX)/dbfopen.o \
 				$(SHAPELIB_PREFIX)/safileio.o
 
-CFLAGS = -g -Wall -fPIC
+CFLAGS = -g -fPIC -Wall -Werror
 CC = gcc
 
 .PHONY: all clean

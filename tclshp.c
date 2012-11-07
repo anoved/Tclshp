@@ -167,12 +167,9 @@ int Shpadd_Init ( Tcl_Interp *interp) {
 int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
 
    SHPHandle	hSHP;
-   int	   	nShapeType, nEntities, i, iPart, nInvalidCount=0, recNum;
-   int 		tmp;
-   const char 	*pszPlus;
+   int	   	nShapeType, nEntities, i, recNum;
    double 	adfMinBound[4], adfMaxBound[4];
    Tcl_Obj 	*resultPtr;
-   Tcl_Obj 	*sublistPtr;
    SHPObject	*psShape;
  
 /* -------------------------------------------------------------------- */
@@ -256,8 +253,7 @@ int Shpinfo_Init ( Tcl_Interp *interp) {
   
 int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
    SHPHandle	hSHP;
-   int	   nShapeType, nEntities, i, iPart, nInvalidCount=0, recNum;
-   const char 	*pszPlus;
+   int	   nShapeType, nEntities, i, iPart, recNum;
    double 	adfMinBound[4], adfMaxBound[4];
    Tcl_Obj 	*resultPtr;
    Tcl_Obj 	*recListPtr;
@@ -383,7 +379,7 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
    for (i = 2; i < objc; i++) {
       if (strcmp(Tcl_GetStringFromObj(objv[i],NULL),"-s") == 0 && i < objc-2) {
          if (Tcl_GetIntFromObj(interp, objv[i+2], &field_length) != TCL_OK) {
-            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+1], NULL), field_length );
+            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+1], NULL));
             return TCL_ERROR;
          }
          if (DBFAddField( hDBF, Tcl_GetStringFromObj(objv[i+1],NULL), FTString, field_length, 0 ) == -1 ) {
@@ -393,11 +389,11 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
          i = i + 2;
       } else if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"-n") == 0 && i < objc-3 ) {
          if (Tcl_GetIntFromObj(interp, objv[i+2], &field_length) != TCL_OK) {
-            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+2], NULL), field_length );
+            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+2], NULL));
             return TCL_ERROR;
          }
          if (Tcl_GetIntFromObj(interp, objv[i+3], &decimal_scale) != TCL_OK) {
-            printf( "decimal_scale must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+3], NULL), decimal_scale );
+            printf( "decimal_scale must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+3], NULL));
             return TCL_ERROR;
          }
          if ( DBFAddField( hDBF, Tcl_GetStringFromObj(objv[i+1],NULL), FTDouble, field_length, decimal_scale) == -1 ) {
@@ -411,6 +407,7 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
       }
    }
    DBFClose( hDBF );
+   return TCL_OK;
 }
 void DbfcreateDel (ClientData clientData) {
 }
@@ -424,6 +421,8 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    DBFHandle	hDBF;
    int		i, iRecord;
    double	dblvalue;
+   char	fieldName[12];
+   
 /* -------------------------------------------------------------------- */
 /*      Display a usage message.                                        */
 /* -------------------------------------------------------------------- */
@@ -457,11 +456,11 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    for( i = 0; i < DBFGetFieldCount(hDBF); i++ ) {
       if( strcmp( Tcl_GetStringFromObj(objv[i+2], NULL), "" ) == 0 ) {
          DBFWriteNULLAttribute(hDBF, iRecord, i );
-      } else if( DBFGetFieldInfo( hDBF, i, NULL, NULL, NULL ) == FTString ) {
+      } else if( DBFGetFieldInfo( hDBF, i, fieldName, NULL, NULL ) == FTString ) {
          DBFWriteStringAttribute(hDBF, iRecord, i, Tcl_GetStringFromObj(objv[i+2],NULL));
       } else {
          if (Tcl_GetDoubleFromObj(interp, objv[i+2], &dblvalue) != TCL_OK) {
-            printf("Expected a number for field %s, but got %s.\n", Tcl_GetStringFromObj(objv[i+2],NULL));
+            printf("Expected a number for field %s, but got %s.\n", fieldName, Tcl_GetStringFromObj(objv[i+2],NULL));
             return TCL_ERROR;
          }
          DBFWriteDoubleAttribute(hDBF, iRecord, i, dblvalue);
@@ -486,12 +485,9 @@ int Dbfadd_Init ( Tcl_Interp *interp) {
 
 int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
    DBFHandle	hDBF;
-   int		*panWidth, i, iRecord, listLength;
-   char		szFormat[32], *pszFilename = NULL;
+   int		i;
+   char		*pszFilename = NULL;
    int		nWidth, nDecimals;
-   int		bHeader = 0;
-   int		bRaw = 0;
-   int		bMultiLine = 0;
    char		szTitle[12];
    Tcl_Obj	*resultPtr;
    Tcl_Obj	*sublistPtr;
@@ -547,8 +543,8 @@ int Dbfinfo_Init ( Tcl_Interp *interp) {
 
 int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
    DBFHandle	hDBF;
-   int		*panWidth, i, iRecord, listLength;
-   char		szFormat[32], *pszFilename = NULL;
+   int		i, iRecord;
+   char		*pszFilename = NULL;
    int		nWidth, nDecimals;
    char		szTitle[12];
    int          intvalue;
@@ -579,7 +575,6 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
          sublistPtr = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
          for (i = 0; i < DBFGetFieldCount(hDBF); i++ ) {
             DBFFieldType        eType;
-            const char          *pszTypeName;
             const char          *strvalue;
       
             eType = DBFGetFieldInfo( hDBF, i, szTitle, &nWidth, &nDecimals );
@@ -610,7 +605,6 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
       iRecord--;
       for (i = 0; i < DBFGetFieldCount(hDBF); i++ ) {
          DBFFieldType        eType;
-         const char          *pszTypeName;
          const char          *strvalue;
       
          eType = DBFGetFieldInfo( hDBF, i, szTitle, &nWidth, &nDecimals );
