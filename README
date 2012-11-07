@@ -1,0 +1,35 @@
+tclshp
+------
+
+Tclshp is a Tcl API for Shapelib.
+
+Tclshp 0.1 was released by Devin J. Eyre in 2006. This fork consists of an
+updated and somewhat simplified distribution developed by Jim DeVona in 2012.
+
+Compiling
+---------
+
+1. Edit SHAPELIB_PREFIX and TCL_PREFIX in Makefile to specify correct paths.
+2. Type 'make' to generate tclshp.o and Tclshp.so
+
+The Tcl extension is comprised of Tclshp.so and tclshp.tcl.
+
+Acknowledgements
+----------------
+
+This fork of tclshp is derived from tclshp 0.1 by Devin J. Eyre.
+It is built with shapelib 1.3.0 by Frank Warmerdam, et al.
+
+https://sourceforge.net/projects/tclshp/
+Tclshp, A Tcl API for shapelib
+
+http://shapelib.maptools.org
+Shapefile C Library (shapelib)
+
+Not to be confused with http://geology.usgs.gov/tools/metadata/tclshp/
+
+License
+-------
+
+In accordance with the shapelib and original tclshp license, this software is
+distributed under the GNU Library General Public License. See LICENSE.LGPL.
