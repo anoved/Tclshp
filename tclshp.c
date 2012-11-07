@@ -70,7 +70,7 @@ int Shpcreate_Init ( Tcl_Interp *interp) {
 
 int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
    SHPHandle  hSHP;
-   int	       nShapeType, nVertices, nParts, *panParts, i, nVMax;
+   int	       nShapeType, nVertices, nParts, nPartIndicesMax, *partIndices, i, nVMax;
    double     *padfX, *padfY;
    SHPObject  *psObject;
 
@@ -104,21 +104,21 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    nVMax = 1000;
    padfX = (double *) malloc(sizeof(double) * nVMax);
    padfY = (double *) malloc(sizeof(double) * nVMax);
-    
    nVertices = 0;
 
-   if( (panParts = (int *) malloc(sizeof(int) * 1000 )) == NULL ) { 
-      printf( "Out of memory\n" );
-      return TCL_ERROR;
-   }
-     
+   nPartIndicesMax = 100;
+   partIndices = (int *) malloc(sizeof(int) * nPartIndicesMax);
    nParts = 1;
-   panParts[0] = 0;
+   partIndices[0] = 0;
 
    for( i = 2; i < objc;  ) {
        if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"+") == 0 ) {
-	  panParts[nParts++] = nVertices;
-	  i++;
+		if( nParts == nPartIndicesMax ) {
+			nPartIndicesMax *= 2;
+			partIndices = (int *) realloc(partIndices, sizeof(int) * nPartIndicesMax);
+		}
+	    partIndices[nParts++] = nVertices;
+	  	i++;
       } else if( i < objc-1 ) {
          if( nVertices == nVMax ) {
             nVMax = nVMax * 2;
@@ -142,14 +142,14 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /* -------------------------------------------------------------------- */
 /*      Write the new entity to the shape file.                         */
 /* -------------------------------------------------------------------- */
-    psObject = SHPCreateObject( nShapeType, -1, nParts, panParts, NULL,
+    psObject = SHPCreateObject( nShapeType, -1, nParts, partIndices, NULL,
                                 nVertices, padfX, padfY, NULL, NULL );
     SHPWriteObject( hSHP, -1, psObject );
     SHPDestroyObject( psObject );
     
     SHPClose( hSHP );
 
-    free( panParts );
+    free( partIndices );
     free( padfX );
     free( padfY );
 
