@@ -318,11 +318,10 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
          SHPClose( hSHP );           
          return TCL_ERROR;
       }
-      if (recNum > nEntities) {
+      if ((recNum >= nEntities) || (recNum < 0)) {
          SHPClose( hSHP );
          return TCL_ERROR;
       }
-      recNum--;
 
       psShape = SHPReadObject( hSHP, recNum );
 
@@ -598,11 +597,10 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
          DBFClose( hDBF );
          return TCL_ERROR;
       }
-      if (DBFGetRecordCount(hDBF) < iRecord) {
+      if ((iRecord >= DBFGetRecordCount(hDBF)) || (iRecord < 0)) {
          DBFClose( hDBF );
          return TCL_ERROR;
       }
-      iRecord--;
       for (i = 0; i < DBFGetFieldCount(hDBF); i++ ) {
          DBFFieldType        eType;
          const char          *strvalue;
