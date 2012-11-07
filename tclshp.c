@@ -646,6 +646,5 @@ int Tclshp_Init (Tcl_Interp *interp) {
    Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, DbfaddDel);
    Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, DbfinfoDel);
    Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, DbfgetDel);
-   /*Tcl_PkgProvide(interp, "Tclshp", "0.1");*/
    return TCL_OK;
 }

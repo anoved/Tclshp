@@ -1,4 +1,3 @@
-#!/usr/local/bin/tclsh
 #
 #    Tclshp, a Tcl API for shapelib
 #    Copyright (C) 2006  Devin J. Eyre
@@ -17,7 +16,7 @@
 #    License along with this library; if not, write to the Free
 #    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA
 #
-package provide Tclshp 0.1
+package provide Tclshp 0.2
 load [file join [file dir [info script]] Tclshp.so]
 namespace eval ::shp {
    rename ::shpadd ::shp::_add
