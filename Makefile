@@ -13,7 +13,7 @@ SHAPELIB_OBJS = $(SHAPELIB_PREFIX)/shpopen.o \
 CFLAGS = -g -fPIC -Wall -Werror
 CC = gcc
 
-.PHONY: all clean
+.PHONY: all clean test
 
 all: Tclshp.so
 
@@ -29,3 +29,13 @@ Tclshp.so: tclshp.o $(SHAPELIB_OBJS)
 
 clean:
 	rm -f Tclshp.so tclshp.o
+
+test:
+	@./test.tcl > test.out
+	@if test "`diff test.out test.txt`" = '' ; then \
+		echo "Test succeeded."; \
+		rm test.out testshp.shp testshp.shx testshp.dbf; \
+	else \
+		echo "Test failed:"; \
+		diff test.out test.txt; \
+	fi
