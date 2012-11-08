@@ -1,7 +1,7 @@
 Tclshp
 ------
 
-A Tcl API for Shapelib based on example utilities included with Shapelib.
+A Tcl interface to Shapelib's sample create, add, and dump utilities.
 
 Tclshp 0.1 was released by Devin J. Eyre in 2006. This fork consists of an
 updated and somewhat simplified distribution developed by Jim DeVona in 2012.
@@ -9,38 +9,22 @@ updated and somewhat simplified distribution developed by Jim DeVona in 2012.
 Compiling
 ---------
 
-1. Edit SHAPELIB_PREFIX and TCL_PREFIX in Makefile to specify correct paths.
-2. Type 'make' to generate tclshp.o and Tclshp.so
+1. Edit `SHAPELIB_PREFIX` and `TCL_PREFIX` in Makefile to specify correct paths.
+2. Type 'make' to generate tclshp.o and Tclshp.dylib
 
-API Summary
------------
+Installation
+------------
 
-A shapefile is a set of files with a common base name, denoted SHPFILE here.
-TYPE is one of 1, 3, 5, or 8, corresponding to point, polyline, polygon, or
-multipoint feature types, respectively. FIELDS is a list defining attribute
-table format; see Tclshp.pdf for details. GEOMETRY is a list of coordinate
-pairs. ATTRIBUTES is a list of attribute values. One feature may be added at a
-time. If present, FEATURE specifies a record; otherwise, a list of all records
-is returned (as GEOMETRY or ATTRIBUTES, for ::shp::get and ::dbf::get). In
-tclshp 0.1, FEATURE values should begin at 1; as of tclshp 0.2, it starts at 0.
-The ::shp::info proc returns a list of TYPE, count, minx, miny, max, maxy.
-The ::dbf::info proc returns a list of count, FIELDS (as lists, not inlined).
+Put Tclshp.dylib somewhere in your Tcl `auto_path` and load it with
+`package require Tclshp`. To run from the current directory, call
+`lappend auto_path .` first. Alternatively, just call `load Tclshp.dylib`.
 
-::shp::create SHPFILE TYPE
-::shp::add SHPFILE GEOMETRY
-::shp::info SHPFILE
-::shp::get SHPFILE [FEATURE]
+Syntax
+------
 
-::dbf::create SHPFILE FIELDS
-::dbf::add SHPFILE ATTRIBUTES
-::dbf::info SHPFILE
-::dbf::get SHPFILE [FEATURE]
-
-The following convenience procedures call the corresponding dbf procedure
-as well as the shp procedure.
-
-::shp::Create SHPFILE TYPE FIELDS
-::shp::Add SHPFILE GEOMETRY ATTRIBUTES
+Examine the `test.tcl` test script for a simple syntax example of all eight
+Tclshp commands (`::shp` and `::dbf` versions of `::create`, `::add`, `::info`,
+and `::get`). See documentation of Tclshp 0.1 in Tclshp.pdf for more details.
 
 Acknowledgements
 ----------------
