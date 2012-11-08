@@ -580,7 +580,9 @@ int Tclshp_Init (Tcl_Interp *interp) {
 	Tcl_CreateObjCommand(interp, "dbf::info", Dbfinfo, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "dbf::get", Dbfget, NULL, NULL);
 	
-	Tcl_PkgProvide(interp, "Tclshp", "0.3");
+	if (Tcl_PkgProvide(interp, "Tclshp", "0.3") != TCL_OK) {
+		return TCL_ERROR;
+	}
 	
 	return TCL_OK;
 }
