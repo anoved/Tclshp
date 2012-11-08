@@ -59,11 +59,8 @@ int Shpcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
     return TCL_OK;
 }
 
-void ShpcreateDel (ClientData clientData) {
-}
-
 int Shpcreate_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, ShpcreateDel);
+   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, NULL);
    return TCL_OK;
 }
 
@@ -155,11 +152,8 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     return TCL_OK;
 }
 
-void ShpaddDel (ClientData clientData) {
-}
-
 int Shpadd_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, ShpaddDel);
+   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, NULL);
    return TCL_OK;
 }
 
@@ -238,11 +232,8 @@ int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    return TCL_OK;
 }
 
-void ShpinfoDel (ClientData clientData) {
-}
-
 int Shpinfo_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, ShpinfoDel);
+   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, NULL);
    return TCL_OK;
 }
   
@@ -338,11 +329,8 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    return TCL_OK;
 }
 
-void ShpgetDel (ClientData clientData) {
-}
-
 int Shpget_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, ShpgetDel);
+   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, NULL);
    return TCL_OK;
 }
   
@@ -400,11 +388,9 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
    DBFClose( hDBF );
    return TCL_OK;
 }
-void DbfcreateDel (ClientData clientData) {
-}
 
 int Dbfcreate_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, DbfcreateDel);
+   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, NULL);
    return TCL_OK;
 }
 
@@ -466,11 +452,8 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     return TCL_OK;
 }
 
-void DbfaddDel (ClientData clientData) {
-}
-
 int Dbfadd_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, DbfaddDel);
+   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, NULL);
    return TCL_OK;
 }
 
@@ -524,11 +507,8 @@ int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    }
 }
 
-void DbfinfoDel (ClientData clientData) {
-}
-
 int Dbfinfo_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, DbfinfoDel);
+   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, NULL);
    return TCL_OK;
 }
 
@@ -617,24 +597,21 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    return TCL_OK;
 }
 
-void DbfgetDel (ClientData clientData) {
-}
-
 int Dbfget_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, DbfgetDel);
+   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, NULL);
    return TCL_OK;
 }
 /* -------------------------------------------------------------------- */
 /*     End of DBF section                                               */
 /* -------------------------------------------------------------------- */
 int Tclshp_Init (Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, ShpcreateDel);
-   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, ShpaddDel);
-   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, ShpinfoDel);
-   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, ShpgetDel);
-   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, DbfcreateDel);
-   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, DbfaddDel);
-   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, DbfinfoDel);
-   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, DbfgetDel);
+   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, NULL);
+   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, NULL);
    return TCL_OK;
 }
