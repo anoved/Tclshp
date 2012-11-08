@@ -12,26 +12,28 @@ SHAPELIB_OBJS = $(SHAPELIB_PREFIX)/shpopen.o \
 
 CFLAGS = -g -fPIC -Wall -Werror
 CC = gcc
+TCL = tclsh
 
 .PHONY: all clean test
 
-all: Tclshp.so
+all: Tclshp.dylib
 
 tclshp.o: tclshp.c
 	$(CC) $(CFLAGS) -c tclshp.c \
 			-I$(SHAPELIB_PREFIX) \
 			-I$(TCL_PREFIX)/include
 
-Tclshp.so: tclshp.o $(SHAPELIB_OBJS)
+Tclshp.dylib: tclshp.o $(SHAPELIB_OBJS)
 	$(CC) -shared -W1,-soname,Tclshp \
-			-o Tclshp.so tclshp.o $(SHAPELIB_OBJS) \
+			-o Tclshp.dylib tclshp.o $(SHAPELIB_OBJS) \
 			-L$(TCL_PREFIX)/lib -ltcl8.5
+	echo "pkg_mkIndex . Tclshp.dylib" | $(TCL)
 
 clean:
-	rm -f Tclshp.so tclshp.o
+	rm -f Tclshp.dylib tclshp.o
 
 test:
-	@./test.tcl > test.out
+	@$(TCL) test.tcl > test.out
 	@if test "`diff test.out test.txt`" = '' ; then \
 		echo "Test succeeded."; \
 		rm test.out testshp.shp testshp.shx testshp.dbf; \
