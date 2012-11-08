@@ -566,17 +566,7 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*     End of DBF section                                               */
 /* -------------------------------------------------------------------- */
 int Tclshp_Init (Tcl_Interp *interp) {
-	
-	Tcl_Namespace *shpNs, *dbfNs;
-	
-	if ((shpNs = Tcl_CreateNamespace(interp, "shp", NULL, NULL)) == NULL) {
-		return TCL_ERROR;
-	}
-	
-	if ((dbfNs = Tcl_CreateNamespace(interp, "dbf", NULL, NULL)) == NULL) {
-		return TCL_ERROR;
-	}
-	
+		
 	Tcl_CreateObjCommand(interp, "shp::create", Shpcreate, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::_add", Shpadd, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::info", Shpinfo, NULL, NULL);
