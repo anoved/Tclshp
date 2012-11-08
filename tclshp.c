@@ -30,9 +30,10 @@ int Shpcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
     int		nShapeType;
     /*char	*shpfilename;*/
     if (objc != 3) {
-	Tcl_WrongNumArgs(interp, 1, objv, "filename, shapeType");
+		Tcl_WrongNumArgs(interp, 1, objv, "fileName shapeType");
 		return TCL_ERROR;
     }
+    
 /* -------------------------------------------------------------------- */
 /*	Figure out the shape type.					*/
 /* -------------------------------------------------------------------- */
@@ -48,12 +49,10 @@ int Shpcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 /* -------------------------------------------------------------------- */
     hSHP = SHPCreate( Tcl_GetStringFromObj(objv[1], NULL), nShapeType );
 
-    if( hSHP == NULL )
-    {
-	printf( "Unable to create:%s\n", Tcl_GetStringFromObj(objv[1],NULL) );
-	return TCL_ERROR;
+    if( hSHP == NULL ) {
+    	Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to create shapefile", -1));
+		return TCL_ERROR;
     }
-    /*printf( "Created: %s\n", shpfilename );*/
 
     SHPClose( hSHP );
     return TCL_OK;
@@ -69,7 +68,7 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*      Display a usage message.                                        */
 /* -------------------------------------------------------------------- */
    if (objc < 2) {
-      Tcl_WrongNumArgs (interp, 1, objv, "shp_file [[x y] [+]]*\n");
+      Tcl_WrongNumArgs (interp, 1, objv, "fileName [[x y] [+]]*\n");
       return TCL_ERROR;
    }
       
@@ -79,8 +78,8 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    hSHP = SHPOpen( Tcl_GetStringFromObj(objv[1], NULL), "r+b" );
 
    if( hSHP == NULL ) {
-      printf( "Unable to open:%s\n", Tcl_GetStringFromObj(objv[1], NULL));
-      return TCL_ERROR;
+   		Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open shapefile", -1));
+		return TCL_ERROR;
    }
 
    SHPGetInfo( hSHP, NULL, &nShapeType, NULL, NULL );
@@ -102,33 +101,36 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    nParts = 1;
    partIndices[0] = 0;
 
-   for( i = 2; i < objc;  ) {
-       if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"+") == 0 ) {
-		if( nParts == nPartIndicesMax ) {
-			nPartIndicesMax *= 2;
-			partIndices = (int *) ckrealloc((char *)partIndices, sizeof(int) * nPartIndicesMax);
+	for( i = 2; i < objc;  ) {
+		if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"+") == 0 ) {
+			if( nParts == nPartIndicesMax ) {
+				nPartIndicesMax *= 2;
+				partIndices = (int *) ckrealloc((char *)partIndices, sizeof(int) * nPartIndicesMax);
+			}
+			
+			partIndices[nParts++] = nVertices;
+			i++;
+		} else if( i < objc-1 ) {
+			if( nVertices == nVMax ) {
+				nVMax = nVMax * 2;
+				padfX = (double *) ckrealloc((char *)padfX,sizeof(double)*nVMax);
+				padfY = (double *) ckrealloc((char *)padfY,sizeof(double)*nVMax);
+			}
+			
+			if (Tcl_GetDoubleFromObj(interp, objv[i], padfX+nVertices) != TCL_OK) {
+				SHPClose( hSHP );
+				return TCL_ERROR;
+			}
+			
+			if (Tcl_GetDoubleFromObj(interp, objv[i+1], padfY+nVertices) != TCL_OK) {
+				SHPClose( hSHP );
+				return TCL_ERROR;
+			}
+			
+			nVertices += 1;
+			i += 2;
 		}
-	    partIndices[nParts++] = nVertices;
-	  	i++;
-      } else if( i < objc-1 ) {
-         if( nVertices == nVMax ) {
-            nVMax = nVMax * 2;
-            padfX = (double *) ckrealloc((char *)padfX,sizeof(double)*nVMax);
-            padfY = (double *) ckrealloc((char *)padfY,sizeof(double)*nVMax);
-         }
-
-	 if (Tcl_GetDoubleFromObj(interp, objv[i], padfX+nVertices) != TCL_OK) {
-             SHPClose( hSHP );
-             return TCL_ERROR;
-         }
-	 if (Tcl_GetDoubleFromObj(interp, objv[i+1], padfY+nVertices) != TCL_OK) {
-             SHPClose( hSHP );
-             return TCL_ERROR;
-         }
-	 nVertices += 1;
-         i += 2;
-      }
-   }
+	}
 
 /* -------------------------------------------------------------------- */
 /*      Write the new entity to the shape file.                         */
@@ -159,7 +161,7 @@ int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 /*      Display a usage message.                                        */
 /* -------------------------------------------------------------------- */
    if( objc < 2 ) {
-      Tcl_WrongNumArgs (interp, 1, objv, "shp_file" );
+      Tcl_WrongNumArgs (interp, 1, objv, "fileName ?featureIndices?" );
       return TCL_ERROR;	
    }
    
@@ -170,7 +172,7 @@ int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    hSHP = SHPOpen( Tcl_GetStringFromObj(objv[1], NULL), "rb" );
 
    if( hSHP == NULL ) {
-      printf( "Unable to open:%s\n", Tcl_GetStringFromObj(objv[1], NULL) );
+      Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open shapefile", -1));
       return TCL_ERROR;
    }
 
@@ -235,7 +237,7 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*      Display a usage message.                                        */
 /* -------------------------------------------------------------------- */
    if( objc < 2 || objc > 3) {
-      Tcl_WrongNumArgs (interp, 1, objv, "shp_file [recordNumber]" );
+      Tcl_WrongNumArgs (interp, 1, objv, "fileName [featureIndex]" );
       return TCL_ERROR;	
     }
    
@@ -246,8 +248,8 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    hSHP = SHPOpen( Tcl_GetStringFromObj(objv[1], NULL), "rb" );
 
    if (hSHP == NULL ) {
-      printf( "Unable to open:%s\n", Tcl_GetStringFromObj(objv[1], NULL) );
-      return TCL_ERROR;
+   		Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open shapefile", -1));
+		return TCL_ERROR;
    }
 
 /* -------------------------------------------------------------------- */
@@ -321,7 +323,7 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
    DBFHandle	hDBF;
    int		i, field_length, decimal_scale;
    if (objc < 2) {
-      printf( "dbfcreate xbase_file [[-s field_name width].[-n field_name width decimals]]...\n");
+   		Tcl_WrongNumArgs(interp, 1, objv, "fileName [FIELDS]");
       return TCL_ERROR;
    }
 /* -------------------------------------------------------------------- */
@@ -329,8 +331,8 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 /* -------------------------------------------------------------------- */
    hDBF = DBFCreate(Tcl_GetStringFromObj(objv[1],NULL));
    if (hDBF == NULL) {
-      printf( "DBFCreate(%s) failed.\n", Tcl_GetStringFromObj(objv[1],NULL));
-      return TCL_ERROR;
+   		Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to create DBF", -1));
+		return TCL_ERROR;
    }
 /* -------------------------------------------------------------------- */
 /*      Loop over the field definitions adding new fields.              */
@@ -338,31 +340,31 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
    for (i = 2; i < objc; i++) {
       if (strcmp(Tcl_GetStringFromObj(objv[i],NULL),"-s") == 0 && i < objc-2) {
          if (Tcl_GetIntFromObj(interp, objv[i+2], &field_length) != TCL_OK) {
-            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+1], NULL));
+         	Tcl_SetObjResult(interp, Tcl_NewStringObj("string field length must be an integer", -1));
             return TCL_ERROR;
          }
          if (DBFAddField( hDBF, Tcl_GetStringFromObj(objv[i+1],NULL), FTString, field_length, 0 ) == -1 ) {
-                printf( "DBFAddField(%s,FTString,%d,0) failed.\n", Tcl_GetStringFromObj(objv[i+1], NULL), field_length );
-                return TCL_ERROR;
+            Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to add string field", -1));
+			return TCL_ERROR;
          }
          i = i + 2;
       } else if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"-n") == 0 && i < objc-3 ) {
          if (Tcl_GetIntFromObj(interp, objv[i+2], &field_length) != TCL_OK) {
-            printf( "field_length must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+2], NULL));
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("numeric field length must be an integer", -1));
             return TCL_ERROR;
          }
          if (Tcl_GetIntFromObj(interp, objv[i+3], &decimal_scale) != TCL_OK) {
-            printf( "decimal_scale must be an integer %s!\n", Tcl_GetStringFromObj(objv[i+3], NULL));
+         	Tcl_SetObjResult(interp, Tcl_NewStringObj("numeric precision must be an integer", -1));
             return TCL_ERROR;
          }
          if ( DBFAddField( hDBF, Tcl_GetStringFromObj(objv[i+1],NULL), FTDouble, field_length, decimal_scale) == -1 ) {
-            printf ("DBFAddField(%s,FTDouble,%d,%d) failed.\n", Tcl_GetStringFromObj(objv[i+1],NULL), field_length, decimal_scale);
+            Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to add numeric field", -1));
             return TCL_ERROR;
          }
          i = i + 3;
       } else {
-         printf( "Argument incomplete, or unrecognised:%s\n", Tcl_GetStringFromObj(objv[i],NULL) );
-         return TCL_ERROR;
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("field specification incomplete or malformed", -1));
+			return TCL_ERROR;
       }
    }
    DBFClose( hDBF );
@@ -379,7 +381,7 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*      Display a usage message.                                        */
 /* -------------------------------------------------------------------- */
     if( objc < 3 ) {
-	Tcl_WrongNumArgs(interp, 1, objv, "xbase_file field_values" );
+		Tcl_WrongNumArgs(interp, 1, objv, "fileName fieldValues" );
         return TCL_ERROR;
     }
 
@@ -388,7 +390,7 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /* -------------------------------------------------------------------- */
     hDBF = DBFOpen( Tcl_GetStringFromObj(objv[1], NULL), "r+b" );
     if (hDBF == NULL) {
-        printf( "DBFOpen(%s,\"rb+\") failed.\n", Tcl_GetStringFromObj(objv[1],NULL) );
+        Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open DBF", -1));
         return TCL_ERROR;
     }
 
@@ -396,7 +398,7 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*      Do we have the correct number of arguments?                     */
 /* -------------------------------------------------------------------- */
     if( DBFGetFieldCount( hDBF ) != objc - 2 ) {
-        printf( "Got %d fields, but require %d\n", objc - 2, DBFGetFieldCount( hDBF ) );
+        Tcl_SetObjResult(interp, Tcl_NewStringObj("number of values does not match number of fields", -1));
         return TCL_ERROR;
     }
 
@@ -412,7 +414,7 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
          DBFWriteStringAttribute(hDBF, iRecord, i, Tcl_GetStringFromObj(objv[i+2],NULL));
       } else {
          if (Tcl_GetDoubleFromObj(interp, objv[i+2], &dblvalue) != TCL_OK) {
-            printf("Expected a number for field %s, but got %s.\n", fieldName, Tcl_GetStringFromObj(objv[i+2],NULL));
+         	Tcl_SetObjResult(interp, Tcl_NewStringObj("unable to assign string value to numeric field", -1));
             return TCL_ERROR;
          }
          DBFWriteDoubleAttribute(hDBF, iRecord, i, dblvalue);
@@ -435,12 +437,17 @@ int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    char		szTitle[12];
    Tcl_Obj	*resultPtr;
    Tcl_Obj	*sublistPtr;
-   if (objc) {
+   
+   if (objc != 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "fileName");
+		return TCL_ERROR;
+	}
+   
       pszFilename = Tcl_GetStringFromObj(objv[1],NULL);
       hDBF = DBFOpen( pszFilename, "rb" );
       if (hDBF == NULL) {
-         printf( "DBFOpen(%s,\"r\") failed.\n", pszFilename);
-         return TCL_ERROR;
+      		Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open DBF", -1));
+			return TCL_ERROR;
       }
       resultPtr = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
       if (DBFGetFieldCount(hDBF) == 0) {
@@ -472,9 +479,6 @@ int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
       Tcl_SetObjResult(interp, resultPtr);
       DBFClose( hDBF );
       return TCL_OK;
-   } else {
-      return TCL_ERROR;
-   }
 }
 
 int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
@@ -487,19 +491,16 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    double       dblvalue;
    Tcl_Obj	*resultPtr;
    Tcl_Obj	*sublistPtr;
-/* -------------------------------------------------------------------- */
-/*   char         *strvalue = NULL;*/
-/*      Display a usage message.                                        */
-/* -------------------------------------------------------------------- */
+
    if( objc < 2 || objc > 3) {
-      Tcl_WrongNumArgs(interp, 1, objv, "xbase_file [record_number]" );
+      Tcl_WrongNumArgs(interp, 1, objv, "fileName [featureIndex]" );
       return TCL_ERROR;
    }
    pszFilename = Tcl_GetStringFromObj(objv[1],NULL);
    hDBF = DBFOpen( pszFilename, "rb" );
    if (hDBF == NULL) {
-      printf( "DBFOpen(%s,\"r\") failed.\n", pszFilename);
-      return TCL_ERROR;
+   		Tcl_SetObjResult(interp, Tcl_NewStringObj("Unable to open DBF", -1));
+		return TCL_ERROR;
    }
    if (DBFGetFieldCount(hDBF) == 0 || DBFGetFieldCount(hDBF) == 0) {
       DBFClose( hDBF );
