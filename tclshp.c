@@ -572,7 +572,7 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 int Tclshp_Init (Tcl_Interp *interp) {
 	
 	Tcl_CreateObjCommand(interp, "shp::create", Shpcreate, NULL, NULL);
-	Tcl_CreateObjCommand(interp, "shp::_add", Shpadd, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "shp::add", Shpadd, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::info", Shpinfo, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::get", Shpget, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "dbf::create", Dbfcreate, NULL, NULL);
