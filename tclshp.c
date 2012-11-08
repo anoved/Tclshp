@@ -59,11 +59,6 @@ int Shpcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
     return TCL_OK;
 }
 
-int Shpcreate_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, NULL);
-   return TCL_OK;
-}
-
 int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
    SHPHandle  hSHP;
    int	       nShapeType, nVertices, nParts, nPartIndicesMax, *partIndices, i, nVMax;
@@ -152,11 +147,6 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     return TCL_OK;
 }
 
-int Shpadd_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, NULL);
-   return TCL_OK;
-}
-
 int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
 
    SHPHandle	hSHP;
@@ -229,11 +219,6 @@ int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    Tcl_SetObjResult(interp, resultPtr);
    SHPClose( hSHP );
 
-   return TCL_OK;
-}
-
-int Shpinfo_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, NULL);
    return TCL_OK;
 }
   
@@ -329,11 +314,6 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    return TCL_OK;
 }
 
-int Shpget_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, NULL);
-   return TCL_OK;
-}
-  
 /* -------------------------------------------------------------------- */
 /*     Start of DBF section                                             */
 /* -------------------------------------------------------------------- */
@@ -386,11 +366,6 @@ int Dbfcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
       }
    }
    DBFClose( hDBF );
-   return TCL_OK;
-}
-
-int Dbfcreate_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, NULL);
    return TCL_OK;
 }
 
@@ -452,11 +427,6 @@ int Dbfadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     return TCL_OK;
 }
 
-int Dbfadd_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, NULL);
-   return TCL_OK;
-}
-
 int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
    DBFHandle	hDBF;
    int		i;
@@ -505,11 +475,6 @@ int Dbfinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    } else {
       return TCL_ERROR;
    }
-}
-
-int Dbfinfo_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, NULL);
-   return TCL_OK;
 }
 
 int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
@@ -597,10 +562,6 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    return TCL_OK;
 }
 
-int Dbfget_Init ( Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, NULL);
-   return TCL_OK;
-}
 /* -------------------------------------------------------------------- */
 /*     End of DBF section                                               */
 /* -------------------------------------------------------------------- */
