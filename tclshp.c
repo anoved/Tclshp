@@ -58,6 +58,9 @@ int Shpcreate (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CON
     return TCL_OK;
 }
 
+/* expects filename arg to be followed by x y x y ... vertex coordinate args.
+   for multi part features, separate ring coordinates with +: x y ... + x y
+   call with something like [eval ::shp::add fileName [join ringVertices ' + ']] */
 int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv []) {
    SHPHandle  hSHP;
    int	       nShapeType, nVertices, nParts, nPartIndicesMax, *partIndices, i, nVMax;
@@ -567,7 +570,7 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*     End of DBF section                                               */
 /* -------------------------------------------------------------------- */
 int Tclshp_Init (Tcl_Interp *interp) {
-		
+	
 	Tcl_CreateObjCommand(interp, "shp::create", Shpcreate, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::_add", Shpadd, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::info", Shpinfo, NULL, NULL);
@@ -576,6 +579,8 @@ int Tclshp_Init (Tcl_Interp *interp) {
 	Tcl_CreateObjCommand(interp, "dbf::add", Dbfadd, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "dbf::info", Dbfinfo, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "dbf::get", Dbfget, NULL, NULL);
-
+	
+	Tcl_PkgProvide(interp, "Tclshp", "0.3");
+	
 	return TCL_OK;
 }

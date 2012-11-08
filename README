@@ -12,8 +12,6 @@ Compiling
 1. Edit SHAPELIB_PREFIX and TCL_PREFIX in Makefile to specify correct paths.
 2. Type 'make' to generate tclshp.o and Tclshp.so
 
-The Tcl extension is comprised of Tclshp.so and tclshp.tcl.
-
 API Summary
 -----------
 
