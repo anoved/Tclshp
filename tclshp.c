@@ -571,6 +571,16 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /* -------------------------------------------------------------------- */
 int Tclshp_Init (Tcl_Interp *interp) {
 	
+	if (
+		#ifdef USE_TCL_STUBS
+			Tcl_InitStubs(interp, "8.1", 0)
+		#else
+			Tcl_PkgRequire(interp, "Tcl", "8.1", 0)
+		#endif
+			== NULL) {
+		return TCL_ERROR;
+	}
+	
 	Tcl_CreateObjCommand(interp, "shp::create", Shpcreate, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::add", Shpadd, NULL, NULL);
 	Tcl_CreateObjCommand(interp, "shp::info", Shpinfo, NULL, NULL);
