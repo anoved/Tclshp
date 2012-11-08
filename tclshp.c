@@ -17,7 +17,6 @@
     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA
 */
 #include <math.h>
-#include <stdlib.h>
 #include <string.h>
 #include "shapefil.h"
 #include <tcl.h>
@@ -102,12 +101,12 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /* -------------------------------------------------------------------- */
 
    nVMax = 1000;
-   padfX = (double *) malloc(sizeof(double) * nVMax);
-   padfY = (double *) malloc(sizeof(double) * nVMax);
+   padfX = (double *) ckalloc(sizeof(double) * nVMax);
+   padfY = (double *) ckalloc(sizeof(double) * nVMax);
    nVertices = 0;
 
    nPartIndicesMax = 100;
-   partIndices = (int *) malloc(sizeof(int) * nPartIndicesMax);
+   partIndices = (int *) ckalloc(sizeof(int) * nPartIndicesMax);
    nParts = 1;
    partIndices[0] = 0;
 
@@ -115,15 +114,15 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
        if( strcmp(Tcl_GetStringFromObj(objv[i], NULL),"+") == 0 ) {
 		if( nParts == nPartIndicesMax ) {
 			nPartIndicesMax *= 2;
-			partIndices = (int *) realloc(partIndices, sizeof(int) * nPartIndicesMax);
+			partIndices = (int *) ckrealloc((char *)partIndices, sizeof(int) * nPartIndicesMax);
 		}
 	    partIndices[nParts++] = nVertices;
 	  	i++;
       } else if( i < objc-1 ) {
          if( nVertices == nVMax ) {
             nVMax = nVMax * 2;
-            padfX = (double *) realloc(padfX,sizeof(double)*nVMax);
-            padfY = (double *) realloc(padfY,sizeof(double)*nVMax);
+            padfX = (double *) ckrealloc((char *)padfX,sizeof(double)*nVMax);
+            padfY = (double *) ckrealloc((char *)padfY,sizeof(double)*nVMax);
          }
 
 	 if (Tcl_GetDoubleFromObj(interp, objv[i], padfX+nVertices) != TCL_OK) {
@@ -149,9 +148,9 @@ int Shpadd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
     
     SHPClose( hSHP );
 
-    free( partIndices );
-    free( padfX );
-    free( padfY );
+    ckfree( (char *)partIndices );
+    ckfree( (char *)padfX );
+    ckfree( (char *)padfY );
 
     return TCL_OK;
 }
@@ -235,10 +234,6 @@ int Shpinfo (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
    }
    Tcl_SetObjResult(interp, resultPtr);
    SHPClose( hSHP );
-
-#ifdef USE_DBMALLOC
-   malloc_dump(2);
-#endif
 
    return TCL_OK;
 }
@@ -340,9 +335,6 @@ int Shpget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
    Tcl_SetObjResult(interp, resultPtr);
    SHPClose( hSHP );
 
-#ifdef USE_DBMALLOC
-   malloc_dump(2);
-#endif
    return TCL_OK;
 }
 
