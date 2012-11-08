@@ -27,13 +27,4 @@ namespace eval ::shp {
          return [eval _add $shpfile $coordlist]
       }
    }
-   proc Create {shpfile shptype field_defs} {
-      create $shpfile $shptype
-      set dbf_res [eval ::dbf::create $shpfile $field_defs]
-      return $dbf_res
-   }
-   proc Add {shpfile shplist dbf_values} {
-      add $shpfile $shplist
-      set dbf_res [eval ::dbf::add $shpfile $dbf_values]
-   }
 }
