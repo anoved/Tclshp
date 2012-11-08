@@ -566,13 +566,25 @@ int Dbfget (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 /*     End of DBF section                                               */
 /* -------------------------------------------------------------------- */
 int Tclshp_Init (Tcl_Interp *interp) {
-   Tcl_CreateObjCommand(interp, "shpcreate", Shpcreate, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "shpadd", Shpadd, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "shpinfo", Shpinfo, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "shpget", Shpget, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "dbfcreate", Dbfcreate, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "dbfadd", Dbfadd, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "dbfinfo", Dbfinfo, NULL, NULL);
-   Tcl_CreateObjCommand(interp, "dbfget", Dbfget, NULL, NULL);
-   return TCL_OK;
+	
+	Tcl_Namespace *shpNs, *dbfNs;
+	
+	if ((shpNs = Tcl_CreateNamespace(interp, "shp", NULL, NULL)) == NULL) {
+		return TCL_ERROR;
+	}
+	
+	if ((dbfNs = Tcl_CreateNamespace(interp, "dbf", NULL, NULL)) == NULL) {
+		return TCL_ERROR;
+	}
+	
+	Tcl_CreateObjCommand(interp, "shp::create", Shpcreate, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "shp::_add", Shpadd, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "shp::info", Shpinfo, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "shp::get", Shpget, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "dbf::create", Dbfcreate, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "dbf::add", Dbfadd, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "dbf::info", Dbfinfo, NULL, NULL);
+	Tcl_CreateObjCommand(interp, "dbf::get", Dbfget, NULL, NULL);
+
+	return TCL_OK;
 }

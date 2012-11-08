@@ -19,10 +19,6 @@
 package provide Tclshp 0.2
 load [file join [file dir [info script]] Tclshp.so]
 namespace eval ::shp {
-   rename ::shpadd ::shp::_add
-   rename ::shpget ::shp::get
-   rename ::shpinfo ::shp::info
-   rename ::shpcreate ::shp::create
    proc add {shpfile coordlist} {
       if {[llength [lindex $coordlist 0]] > 1} {
          #It's a list of lists
@@ -40,10 +36,4 @@ namespace eval ::shp {
       add $shpfile $shplist
       set dbf_res [eval ::dbf::add $shpfile $dbf_values]
    }
-}
-namespace eval ::dbf {
-   rename ::dbfcreate ::dbf::create
-   rename ::dbfinfo ::dbf::info
-   rename ::dbfadd ::dbf::add
-   rename ::dbfget ::dbf::get
 }
